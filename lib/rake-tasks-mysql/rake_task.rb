@@ -12,9 +12,10 @@ namespace :mysql do
 
   task :console do
     args = parse_mysql_args(ARGV)
+    command = 'mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" ' + args.join(' ')
     services_from_args(services: %w[mysql]).exec(
       'root',
-      'bash -c \'set -x &&  mysql -u' + Shellwords.escape('$MYSQL_USER') + ' -p' + Shellwords.escape('$MYSQL_PASSWORD') + " #{args.join(' ')}'"
+      "bash -c '#{command}'"
     )
     exit $?.to_i
   end
