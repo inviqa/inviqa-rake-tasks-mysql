@@ -1,5 +1,3 @@
-require_relative 'services'
-
 namespace :mysql do
   def parse_mysql_args(args)
     if args.length > 2
