@@ -64,6 +64,12 @@ namespace :mysql do
     args = parse_argv
     args = parse_mysqlrestore_args(args)
 
+    asker = HighLine.new
+    unless asker.agree("You are about to apply the mysqldump from #{args[:filename]}. This will overwrite the existing database. Are you sure you wish to continue? (y/n): ")
+      STDERR.puts "==> Not applying sqldump to the database\n\n"
+      exit(1)
+    end
+
     STDOUT.puts "==> Applying the mysqldump from #{args[:filename]}. Copying the file to the container:\n\n"
 
     docker = services_from_args(services: %w[mysql])
@@ -72,6 +78,8 @@ namespace :mysql do
       STDERR.puts "\n\n==> The dump could not be copied to the container\n\n"
       exit $?.to_i
     end
+
+    STDOUT.puts "\n\n==> Copied the dump to the container. Applying to the database:\n\n"
 
     command = 'gzip --decompress --stdout ' + Shellwords.escape(args[:filename]) + ' | mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"'
     docker.exec(
