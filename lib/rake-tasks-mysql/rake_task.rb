@@ -64,7 +64,7 @@ namespace :mysql do
     args = parse_argv
     args = parse_mysqlrestore_args(args)
 
-    STDOUT.puts "==> Applying the mysqldump from #{args[:filename]}\n\n"
+    STDOUT.puts "==> Applying the mysqldump from #{args[:filename]}. Copying the file to the container:\n\n"
 
     docker = services_from_args(services: %w[mysql])
     docker.upload(args[:filename], args[:filename])
