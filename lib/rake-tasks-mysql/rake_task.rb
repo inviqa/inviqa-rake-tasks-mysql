@@ -81,7 +81,7 @@ namespace :mysql do
 
     STDOUT.puts "\n\n==> Copied the dump to the container. Applying to the database:\n\n"
 
-    command = 'gzip --decompress --stdout ' + container_path + ' | mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"'
+    command = 'gzip --decompress --stdout ' + Shellwords.escape(container_path) + ' | mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"'
     docker.exec(
       'root',
       "bash -c '#{command}'"
