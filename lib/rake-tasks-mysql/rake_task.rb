@@ -73,7 +73,7 @@ namespace :mysql do
     STDOUT.puts "==> Applying the mysqldump from #{args[:filename]}. Copying the file to the container:\n\n"
 
     docker = services_from_args(services: %w[mysql])
-    docker.upload(args[:filename], args[:filename])
+    container_path = docker.upload(args[:filename], args[:filename])
     if $?.to_i != 0
       STDERR.puts "\n\n==> The dump could not be copied to the container\n\n"
       exit $?.to_i
@@ -81,7 +81,7 @@ namespace :mysql do
 
     STDOUT.puts "\n\n==> Copied the dump to the container. Applying to the database:\n\n"
 
-    command = 'gzip --decompress --stdout ' + Shellwords.escape(args[:filename]) + ' | mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"'
+    command = 'gzip --decompress --stdout ' + container_path + ' | mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"'
     docker.exec(
       'root',
       "bash -c '#{command}'"
